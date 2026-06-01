@@ -1,0 +1,59 @@
+@Metadata.layer: #CORE
+@UI: {
+  headerInfo: {
+    typeName: 'Historial',
+    typeNamePlural: 'Historiales',
+    title: { type: #STANDARD, value: 'NewStatus' }
+  } ,
+  presentationVariant: [{
+    qualifier: 'SortHistory',
+    sortOrder: [{ by: 'HisId' , direction: #ASC }],
+    visualizations: [{ type: #AS_LINEITEM }]
+  }]
+}
+annotate view ZC_DT_INCT_H_KPM with
+{
+  @UI.facet: [
+    { id: 'HistoryInfo',
+      purpose: #STANDARD,
+      type: #IDENTIFICATION_REFERENCE,
+      label: 'Detalle de Cambio',
+      position: 10 }
+  ]
+
+  @UI.hidden: true
+  HisUuid;
+
+  @UI.hidden: true
+  IncUuid;
+  
+  @EndUserText.label: 'ID Historial'
+  @UI: { lineItem: [ { position: 10 } ] }
+  HisId;
+
+  @EndUserText.label: 'Estado Anterior'
+  @UI: { lineItem:       [ { position: 20, importance: #HIGH } ],
+         identification: [ { position: 10 } ] }
+  PreviousStatus;
+
+  @EndUserText.label: 'Nuevo Estado'
+  @UI: { lineItem:       [ { position: 30, importance: #HIGH } ],
+         identification: [ { position: 20 } ] }
+  NewStatus;
+
+  @EndUserText.label: 'Observación'
+  @UI: { lineItem:       [ { position: 40, importance: #HIGH } ],
+         identification: [ { position: 30 } ] }
+  Observation;
+
+  @UI.hidden: true
+  LocalCreatedBy;
+  @UI.hidden: true
+  LocalCreatedAt;
+  @UI.hidden: true
+  LocalLastChangedBy;
+  @UI.hidden: true
+  LocalLastChangedAt;
+  @UI.hidden: true
+  LastChangedAt;
+}

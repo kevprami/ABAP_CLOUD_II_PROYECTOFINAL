@@ -1,0 +1,5 @@
+@EndUserText.label: 'Service Definition para Incidentes - KPM'
+define service ZSD_INCT_KPM {
+  expose ZC_DT_INCT_KPM   as Incident;
+  expose ZC_DT_INCT_H_KPM as History;
+}

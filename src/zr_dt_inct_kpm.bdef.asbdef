@@ -1,0 +1,92 @@
+managed implementation in class zbp_r_dt_inct_kpm unique;
+strict ( 2 );
+with draft;
+
+define behavior for ZR_DT_INCT_KPM alias Incident
+persistent table zdt_inct_kpm
+draft table zdt_inct_kpm_d
+lock master
+total etag LastChangedAt
+authorization master ( instance )
+with additional save
+{
+  create;
+  update;
+  delete;
+
+  field ( numbering : managed, readonly ) IncUuid;
+  field ( readonly ) ChangedDate, Status, IncidentId, CreationDate, LocalCreatedBy, LocalCreatedAt, LocalLastChangedBy, LocalLastChangedAt, LastChangedAt;
+  field ( mandatory ) Title, Description, Priority;
+
+  draft action Edit;
+  draft action Activate optimized;
+  draft action Discard;
+  draft action Resume;
+  draft determine action Prepare;
+
+  mapping for zdt_inct_kpm
+  {
+    IncUuid = inc_uuid;
+    IncidentId = incident_id;
+    Title = title;
+    Description = description;
+    Status = status;
+    Priority = priority;
+    Responsible = responsible;
+    CreationDate = creation_date;
+    ChangedDate = changed_date;
+    LocalCreatedBy = local_created_by;
+    LocalCreatedAt = local_created_at;
+    LocalLastChangedBy = local_last_changed_by;
+    LocalLastChangedAt = local_last_changed_at;
+    LastChangedAt = last_changed_at;
+  }
+
+  association _History { with draft; }
+
+  determination setInitialValues on modify { create; }
+
+  determination createInitialHistory on save { create; }
+
+  validation validateMandatory on save { create; update; }
+  validation validateStatus on save { create; update; field Status; }
+  validation validateDates on save { create; update; field CreationDate, ChangedDate; }
+  validation validateResponsible on save { create; update; field Status, Responsible; }
+
+  action ( features : instance ) changeStatus parameter ZA_CHANGE_STATUS_KPM result [1] $self;
+
+
+  side effects {
+    action changeStatus affects entity _History;
+  }
+}
+
+define behavior for ZR_DT_INCT_H_KPM alias History
+persistent table zdt_inct_h_kpm
+draft table zdt_inct_h_kpm_d
+lock dependent by _Incident
+authorization dependent by _Incident
+{
+  update;
+  delete;
+
+  field ( numbering : managed, readonly ) HisUuid;
+  field ( readonly ) IncUuid, HisId, LocalCreatedBy, LocalCreatedAt, LocalLastChangedBy, LocalLastChangedAt, LastChangedAt;
+
+  mapping for zdt_inct_h_kpm
+  {
+    HisUuid = his_uuid;
+    IncUuid = inc_uuid;
+    HisId = his_id;
+    PreviousStatus = previous_status;
+    NewStatus = new_status;
+    Observation = observation;
+    LocalCreatedBy = local_created_by;
+    LocalCreatedAt = local_created_at;
+    LocalLastChangedBy = local_last_changed_by;
+    LocalLastChangedAt = local_last_changed_at;
+    LastChangedAt = last_changed_at;
+  }
+
+  association _Incident { with draft; }
+}
